@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CRUD_SIMPLES_PRODUTOS;
 
 class Program
 {
-    static List<Produto> produtos = new List<Produto>();
-
+    static readonly List<Produto> produtos = new();
     static void Main()
     {
         while (true)
@@ -51,7 +49,8 @@ class Program
     static void AdicionarProduto()
     {
         Console.WriteLine("Informe o nome do produto:");
-        string nome = Console.ReadLine();
+       
+        var nome = Console.ReadLine() ?? string.Empty;
 
         if (string.IsNullOrEmpty(nome))
         {
@@ -67,6 +66,7 @@ class Program
         }
 
         produtos.Add(item: new Produto { Nome = nome, ID = id });
+    
         Console.WriteLine("Produto adicionado com sucesso!");
     }
 
@@ -74,9 +74,9 @@ class Program
     static void RemoverProduto()
     {
         Console.WriteLine("Informe o ID do produto a ser removido:");
-        if (int.TryParse(Console.ReadLine(), out int id))
+        if (int.TryParse(Console.ReadLine() ?? string.Empty, out int id))
         {
-            Produto produtoParaRemover = produtos.Find(p => p.ID == id);
+            Produto? produtoParaRemover = produtos.Find(p => p.ID == id);
 
             if (produtoParaRemover != null)
             {
@@ -97,19 +97,24 @@ class Program
     static void EditarProduto()
     {
         Console.WriteLine("Informe o ID do produto a ser editado:");
-        if (int.TryParse(Console.ReadLine(), out int id))
+        if (int.TryParse(Console.ReadLine()??string.Empty, out int id))
         {
-#pragma warning disable CS8600 // Conversão de literal nula ou possível valor nulo em tipo não anulável.
-            Produto produtoParaEditar = produtos.Find(p => p.ID == id);
-#pragma warning restore CS8600 // Conversão de literal nula ou possível valor nulo em tipo não anulável.
+            Produto? produtoParaEditar = produtos.Find(p => p.ID == id);
+
             if (produtoParaEditar != null)
             {
                 Console.WriteLine("Informe o novo nome do produto:");
-#pragma warning disable CS8600 // Conversão de literal nula ou possível valor nulo em tipo não anulável.
-                string novoNome = Console.ReadLine();
-#pragma warning restore CS8600 // Conversão de literal nula ou possível valor nulo em tipo não anulável.
-                produtoParaEditar.Nome = novoNome;
-                Console.WriteLine("Produto editado com sucesso!");
+                string? novoNome = Console.ReadLine();
+
+                if (!string.IsNullOrEmpty(novoNome))
+                {
+                    produtoParaEditar.Nome = novoNome;
+                    Console.WriteLine("Produto editado com sucesso!");
+                }
+                else
+                {
+                    Console.WriteLine("O novo nome não pode ser nulo ou vazio. A edição foi cancelada.");
+                }
             }
             else
             {
@@ -131,10 +136,5 @@ class Program
         }
     }
 }
-public class Produto
-{
 
 
-    public int ID { get; } 
-    public string? Nome { get; set; }
-}
